@@ -11,6 +11,7 @@ hexo.extend.filter.register('after_post_render', function(data){
   if(config.post_asset_folder){
     var link = data.permalink;
     var beginPos = getPosition(link, '/', 3) + 1;
+    var endPos = link.lastIndexOf('/');
     var appendLink = '';
     // In hexo 3.1.1, the permalink of "about" page is like ".../about/index.html".
     // if not with index.html endpos = link.lastIndexOf('.') + 1 support hexo-abbrlink
@@ -18,10 +19,6 @@ hexo.extend.filter.register('after_post_render', function(data){
       // when permalink is end with index.html, for example 2019/02/20/xxtitle/index.html
       // image in xxtitle/ will go to xxtitle/index/
       appendLink = 'index/';
-      var endPos = link.lastIndexOf('/');
-    }
-    else {
-      var endPos = link.length-1;
     }
     link = link.substring(beginPos, endPos) + '/' + appendLink;
 
@@ -37,9 +34,9 @@ hexo.extend.filter.register('after_post_render', function(data){
       });
 
       $('img').each(function(){
-        if ($(this).attr('src')){
+        if ($(this).attr('data-src')){
           // For windows style path, we replace '\' to '/'.
-          var src = $(this).attr('src').replace('\\', '/');
+          var src = $(this).attr('data-src').replace('\\', '/');
           if(!(/http[s]*.*|\/\/.*/.test(src)
             || /^\s+\//.test(src)
             || /^\s*\/uploads|images\//.test(src))) {
@@ -55,7 +52,7 @@ hexo.extend.filter.register('after_post_render', function(data){
             srcArray.shift();
             src = srcArray.join('/');
 
-            $(this).attr('src', config.root + link + src);
+            $(this).attr('data-src', config.root + link + src);
             console.info&&console.info("update link as:-->"+config.root + link + src);
           }
         }else{
